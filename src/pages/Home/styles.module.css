@@ -1,0 +1,36 @@
+.main {
+    display: flex;
+    flex-direction: column;
+}
+
+.main h1 {
+    text-align: center;
+    font-weight: 500;
+}
+
+.main h2 {
+    font-weight: 500;
+}
+
+.results {
+    display: grid;
+    grid-template-columns: 30% 30% 30%;
+    justify-content: space-around;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .results {
+        grid-template-columns: 50% 50%;
+    }
+}
+
+@media (max-width: 480px) {
+    .results {
+        grid-template-columns: 100%;
+    }
+}
