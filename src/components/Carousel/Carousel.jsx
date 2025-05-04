@@ -8,6 +8,14 @@ function Carousel({bodyParts, category, setCategory}) {
     const carousel = useRef(null);
     bodyParts.unshift('All');
 
+    function capitalize(str) {
+        if (!str) return '';
+        return str
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    }
+
     function scrollLeft() {
         carousel.current.scrollBy({ left: -220, behavior: 'smooth' });
     }
@@ -24,7 +32,7 @@ function Carousel({bodyParts, category, setCategory}) {
                         <div key={indx} className={category === part ? `${styles.block} ${styles.active}` : styles.block} onClick={() => { setCategory(part) }} >
                             <div>
                                 <Wind />
-                                <h4>{part}</h4>
+                                <h4>{capitalize(part)}</h4>
                             </div>
                         </div>
                     );

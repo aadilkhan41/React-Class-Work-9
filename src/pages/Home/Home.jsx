@@ -5,6 +5,7 @@ import SearchBar from '../../components/SearchBar/SearchBar';
 import Carousel from '../../components/Carousel/Carousel';
 import Exercise from '../../components/Exercise/Exercise';
 import Pagination from '../../components/Pagination/Pagination';
+import Loader from '../../components/Loader/Loader';
 
 const options = {
     method: 'GET',
@@ -20,19 +21,22 @@ function Home() {
     const [search, setSearch] = useState('');
     const [category, setCategory] = useState('All');
     const bodyParts = ["back", "cardio", "chest", "lower arms", "lower legs", "neck", "shoulders", "upper arms", "upper legs", "waist"];
-
+    const [loader, setLoader] = useState(false);
     async function searchExercise() {
         if (search != '') {
-            const encoded = encodeURIComponent(search);
+            setLoader(true);
+            const encoded = encodeURIComponent(search.toLowerCase());
             const res = await fetch(`https://exercisedb.p.rapidapi.com/exercises/name/${encoded}?offset=0&limit=1000`, options);
             const data = await res.json();
             if(category === 'All'){
                 setResults(data);
             }else{
                 setResults(data.filter((ele)=>{
-                    return ele.bodyPart == category;
+                    return ele.bodyPart == category.toLowerCase();
                 }));
             }
+            
+            setLoader(false);
         }
     }
 
@@ -52,17 +56,20 @@ function Home() {
             <h1>Awesome Exercises You <br /> Should Know</h1>
             <SearchBar search={search} setSearch={setSearch} searchExercise={searchExercise} />
             <Carousel bodyParts={bodyParts} category={category} setCategory={setCategory} />
-            {exercises.length > 0 ? <>
-                <h2>Search Results</h2>
-                <div className={styles.results}>
-                    {exercises.map((exercise) => {
-                        return <Exercise key={exercise.id} exercise={exercise} />;
-                    })}
-                </div>
-                <div className={styles.pagination}>
-                    <Pagination totalRestro={results.length} updateResult={updateResult} />
-                </div>
-            </> : <></>}
+            {!loader? <>
+                {exercises.length > 0 ? <>
+                    <h2>Search Results ({results.length})</h2>
+                    <div className={styles.results}>
+                        {exercises.map((exercise) => {
+                            return <Exercise key={exercise.id} exercise={exercise} />;
+                        })}
+                    </div>
+                    <div className={styles.pagination}>
+                        <Pagination totalRestro={results.length} updateResult={updateResult} />
+                    </div>
+                </> : <p className={styles.sorry}>Sorry, no results were found for query '{search}'.</p>}
+            </> : <Loader/>}
+            
         </main>
     );
 }
